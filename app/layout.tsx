@@ -1,15 +1,16 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Space_Mono } from "next/font/google"
 import "./globals.css"
 
-const inter = Inter({
+const spaceMono = Space_Mono({
+  weight: ["400", "700"],
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-space-mono",
 })
 
 export const metadata: Metadata = {
-  title: "hiffs",
-  description: "roblox developer since 2022",
+  title: "cosmin",
+  description: "full stack developer specializing in modern web technologies",
 }
 
 export default function RootLayout({
@@ -19,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} font-sans bg-black text-white antialiased`}>
+      <body className={`${spaceMono.variable} font-mono bg-black text-white antialiased`}>
         {children}
       </body>
     </html>
