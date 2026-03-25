@@ -2,6 +2,25 @@
 
 import { useEffect, useRef } from "react"
 
+interface Star {
+  x: number
+  y: number
+  size: number
+  opacity: number
+  twinkleSpeed: number
+  twinklePhase: number
+}
+
+interface ShootingStar {
+  x: number
+  y: number
+  length: number
+  speed: number
+  angle: number
+  opacity: number
+  active: boolean
+}
+
 export function Starfield() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -16,33 +35,36 @@ export function Starfield() {
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
     }
+
     resizeCanvas()
     window.addEventListener("resize", resizeCanvas)
 
-    // Stars
-    const stars: { x: number; y: number; size: number; opacity: number; twinkleSpeed: number }[] = []
-    const numStars = 150
+    // Create stars
+    const stars: Star[] = []
+    const starCount = 200
 
-    for (let i = 0; i < numStars; i++) {
+    for (let i = 0; i < starCount; i++) {
       stars.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         size: Math.random() * 1.5 + 0.5,
         opacity: Math.random() * 0.8 + 0.2,
-        twinkleSpeed: Math.random() * 0.02 + 0.005,
+        twinkleSpeed: Math.random() * 0.02 + 0.01,
+        twinklePhase: Math.random() * Math.PI * 2,
       })
     }
 
-    // Shooting stars
-    const shootingStars: { x: number; y: number; length: number; speed: number; opacity: number; active: boolean }[] = []
+    // Create shooting stars
+    const shootingStars: ShootingStar[] = []
 
     const createShootingStar = () => {
-      if (Math.random() < 0.003) {
+      if (Math.random() < 0.002) {
         shootingStars.push({
           x: Math.random() * canvas.width,
-          y: 0,
+          y: Math.random() * canvas.height * 0.5,
           length: Math.random() * 80 + 40,
-          speed: Math.random() * 8 + 6,
+          speed: Math.random() * 8 + 4,
+          angle: Math.PI / 4 + (Math.random() - 0.5) * 0.3,
           opacity: 1,
           active: true,
         })
@@ -53,51 +75,55 @@ export function Starfield() {
     let time = 0
 
     const animate = () => {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.1)"
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
-      ctx.fillStyle = "#000"
+      ctx.fillStyle = "rgba(0, 0, 0, 1)"
       ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-      time += 0.01
+      time += 0.016
 
-      // Draw stars with twinkling
+      // Draw stars
       stars.forEach((star) => {
-        const twinkle = Math.sin(time * star.twinkleSpeed * 100) * 0.3 + 0.7
+        const twinkle = Math.sin(time * star.twinkleSpeed * 60 + star.twinklePhase)
+        const currentOpacity = star.opacity * (0.5 + twinkle * 0.5)
+
         ctx.beginPath()
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity * twinkle})`
+        ctx.fillStyle = `rgba(255, 255, 255, ${currentOpacity})`
         ctx.fill()
       })
 
-      // Create and draw shooting stars
+      // Create and update shooting stars
       createShootingStar()
 
       shootingStars.forEach((star, index) => {
         if (!star.active) return
 
+        star.x += Math.cos(star.angle) * star.speed
+        star.y += Math.sin(star.angle) * star.speed
+        star.opacity -= 0.015
+
+        if (star.opacity <= 0 || star.x > canvas.width || star.y > canvas.height) {
+          shootingStars.splice(index, 1)
+          return
+        }
+
         const gradient = ctx.createLinearGradient(
           star.x,
           star.y,
-          star.x - star.length * 0.7,
-          star.y - star.length * 0.3
+          star.x - Math.cos(star.angle) * star.length,
+          star.y - Math.sin(star.angle) * star.length
         )
         gradient.addColorStop(0, `rgba(255, 255, 255, ${star.opacity})`)
         gradient.addColorStop(1, "rgba(255, 255, 255, 0)")
 
         ctx.beginPath()
         ctx.moveTo(star.x, star.y)
-        ctx.lineTo(star.x - star.length * 0.7, star.y - star.length * 0.3)
+        ctx.lineTo(
+          star.x - Math.cos(star.angle) * star.length,
+          star.y - Math.sin(star.angle) * star.length
+        )
         ctx.strokeStyle = gradient
         ctx.lineWidth = 1.5
         ctx.stroke()
-
-        star.x += star.speed
-        star.y += star.speed * 0.4
-        star.opacity -= 0.008
-
-        if (star.opacity <= 0 || star.x > canvas.width || star.y > canvas.height) {
-          shootingStars.splice(index, 1)
-        }
       })
 
       animationId = requestAnimationFrame(animate)
