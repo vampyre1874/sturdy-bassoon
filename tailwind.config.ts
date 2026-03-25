@@ -32,7 +32,7 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        mono: ["var(--font-space-mono)", "monospace"],
+        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
       },
     },
   },

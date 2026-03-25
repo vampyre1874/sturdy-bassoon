@@ -6,12 +6,12 @@
   :root {
     --background: 0 0% 0%;
     --foreground: 0 0% 100%;
-    --card: 0 0% 4%;
+    --card: 0 0% 9%;
     --card-foreground: 0 0% 100%;
-    --muted: 0 0% 10%;
-    --muted-foreground: 0 0% 40%;
-    --border: 0 0% 10%;
-    --accent: 200 100% 50%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 45%;
+    --border: 0 0% 15%;
+    --accent: 142 76% 36%;
     --accent-foreground: 0 0% 100%;
     --radius: 0.5rem;
   }
@@ -22,7 +22,7 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-black text-white;
   }
 }
 
@@ -33,14 +33,14 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: hsl(var(--background));
+  background: #000;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted));
+  background: #333;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--muted-foreground));
+  background: #555;
 }
