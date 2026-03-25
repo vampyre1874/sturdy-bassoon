@@ -14,15 +14,15 @@ const tabs = [
 
 export function Navigation({ activeTab, onTabChange }: NavigationProps) {
   return (
-    <nav className="flex items-center gap-4">
+    <nav className="flex items-center gap-6">
       {tabs.map((tab) => (
         <button
           key={tab.id}
           onClick={() => onTabChange(tab.id)}
           className={`text-sm transition-colors ${
             activeTab === tab.id
-              ? "text-foreground font-medium"
-              : "text-muted-foreground hover:text-foreground"
+              ? "text-white font-medium"
+              : "text-[#555] hover:text-[#888]"
           }`}
         >
           {tab.label}
